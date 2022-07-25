@@ -19,27 +19,18 @@ namespace double_click
             buttonTryDoubleClick.DoubleClick += ButtonTryDoubleClick_DoubleClick;
         }
 
-        private async void ButtonTryDoubleClick_Click(object sender, EventArgs e)
-        {
-            _isDoubleClick = false;
-            // Allow some time to get the second click if it's coming.
-            await Task.Delay(100);
-            if(!_isDoubleClick)
+        private void ButtonTryDoubleClick_Click(object sender, EventArgs e) =>
+            BeginInvoke((MethodInvoker)delegate
             {
                 MessageBox.Show("Clicked");
-            }
-        }
-
-        bool _isDoubleClick = false;
-        private void ButtonTryDoubleClick_DoubleClick(object sender, EventArgs e)
-        {
-            _isDoubleClick = true;
+            });
+        private void ButtonTryDoubleClick_DoubleClick(object sender, EventArgs e) =>
             BeginInvoke((MethodInvoker)delegate 
             {
                 MessageBox.Show("Double Clicked");
             }); 
-        }
     }
+
     class ButtonWithDoubleClick : Button
     {
         enum ClickState
@@ -66,6 +57,7 @@ namespace double_click
             {
                 base.OnClick(e);
             }
+            // Allow some time to get the second click if it's coming.
             await Task.Delay(100);
             if(_state != ClickState.Double)
             {
