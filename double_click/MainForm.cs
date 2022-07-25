@@ -42,6 +42,12 @@ namespace double_click
     }
     class ButtonWithDoubleClick : Button
     {
+        enum ClickState
+        {
+            Reset,
+            Single,
+            Double,
+        }
         const int WM_LBUTTONDBLCLK = 0x203;
         protected override void WndProc(ref Message m)
         {
@@ -52,6 +58,26 @@ namespace double_click
                     OnDoubleClick(EventArgs.Empty);
                     break;
             }
+        }
+        ClickState _state = ClickState.Reset;
+        protected async override void OnClick(EventArgs e)
+        {
+            if(_state == ClickState.Single)
+            {
+                base.OnClick(e);
+            }
+            await Task.Delay(100);
+            if(_state != ClickState.Double)
+            {
+                base.OnClick(e);
+            }
+            _state = ClickState.Reset;
+        }
+
+        protected override void OnDoubleClick(EventArgs e)
+        {
+            _state = ClickState.Double;
+            base.OnDoubleClick(e);
         }
     }
 }
